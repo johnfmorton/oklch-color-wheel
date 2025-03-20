@@ -21,10 +21,7 @@ export class OklchColorWheel extends LitElement {
       padding: 0rem;
       font-family: 'Arial', sans-serif;
     }
-    .wheel-container {
-      padding: 1rem;
-      background-color: green;
-    }
+
     svg {
       /* Make the SVG fill the host container */
       width: 100%;
@@ -45,7 +42,6 @@ export class OklchColorWheel extends LitElement {
       /* Absolutely centered text inside the host container */
       position: absolute;
       top: 50%;
-      left: 50%;
       transform: translate(-50%, -50%);
       pointer-events: none;
       text-align: center;
@@ -53,11 +49,22 @@ export class OklchColorWheel extends LitElement {
       font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo,
         Consolas, 'DejaVu Sans Mono', monospace;
       font-weight: bold;
-      /* If you want it to adapt to smaller screens, consider something like:
-         font-size: clamp(1rem, 5vw, 3rem);
-       */
-      font-size: 1.2rem;
-      font-size: clamp(1rem, 5vw, 3rem);
+    }
+
+    @media (max-width: 400px) {
+      .degree {
+        font-size: 3rem;
+        left: calc(50% + 15px);
+        /* simpler style for small wrapper */
+      }
+    }
+
+    @media (min-width: 401px) {
+      .degree {
+        font-size: 4.25rem;
+        left: calc(50% + 22px);
+        /* or anything else for bigger wrapper */
+      }
     }
   `;
 
@@ -106,9 +113,9 @@ export class OklchColorWheel extends LitElement {
   render() {
     // Convert hue to radians to place the handle
     const angleRad = (this.hue * Math.PI) / 180;
-    // 150 radius matches 300 viewBox. Adjust radius or viewBox if you want a margin.
-    const handleX = 150 + 150 * Math.cos(angleRad);
-    const handleY = 150 + 150 * Math.sin(angleRad);
+    // 140 radius matches 300 viewBox. Adjust radius or viewBox if you want a margin.
+    const handleX = 150 + 137 * Math.cos(angleRad);
+    const handleY = 150 + 137 * Math.sin(angleRad);
 
     return html`
       <div class="wrapper">
@@ -120,41 +127,40 @@ export class OklchColorWheel extends LitElement {
         >
           Drag the white circle to change the degree.
         </div>
-        <div class="wheel-container">
-          <div
-            class="outer-wheel"
-            style="
+
+        <div
+          class="outer-wheel"
+          style="
           max-width: 300px;
           height: 300px;
           border-radius: 0%;
           margin: 0 auto;
           position: relative;
         "
-          >
-            <svg viewBox="0 0 300 300" preserveAspectRatio="xMidYMid meet">
-              <!-- The circle is 300 in diameter to match the entire viewBox -->
+        >
+          <svg viewBox="0 0 300 300" preserveAspectRatio="xMidYMid meet">
+            <!-- The circle is 300 in diameter to match the entire viewBox -->
+            <circle
+              cx="150"
+              cy="150"
+              r="137"
+              fill="oklch(50.0% 0.2 ${this.hue.toFixed(0)})"
+              stroke="lightgray"
+            ></circle>
+            <g
+              class="handle-group"
+              @mousedown=${this._startDrag}
+              @touchstart=${this._startDrag}
+            >
               <circle
-                cx="150"
-                cy="150"
-                r="150"
-                fill="oklch(50.0% 0.2 ${this.hue.toFixed(0)})"
-                stroke="lightgray"
+                class="handle"
+                cx=${handleX}
+                cy=${handleY}
+                r="10"
               ></circle>
-              <g
-                class="handle-group"
-                @mousedown=${this._startDrag}
-                @touchstart=${this._startDrag}
-              >
-                <circle
-                  class="handle"
-                  cx=${handleX}
-                  cy=${handleY}
-                  r="10"
-                ></circle>
-              </g>
-            </svg>
-            <div class="degree">${this.hue.toFixed(0)}°</div>
-          </div>
+            </g>
+          </svg>
+          <div class="degree">${this.hue.toFixed(0)}°</div>
         </div>
 
         <div
