@@ -19,6 +19,11 @@
     "build": "rimraf dist && rollup -c rollup.config.js",
     "start:build": "npm run build && es-dev-server --root-dir dist --app-index index.html --compatibility none --open"
   },
+  "scripts-removed": {
+    "build": "rollup -c",
+    "build:dev": "rollup -c rollup.config.dev.js",
+    "serve": "concurrently -k -r \"rollup -c rollup.config.dev.js -w\" \"es-dev-server --app-index index.html --node-resolve --watch --open\""
+  },
   "dependencies": {
     "@open-wc/lit-helpers": "^0.7.0",
     "lit": "^3.1.4"
