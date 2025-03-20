@@ -18,6 +18,7 @@
     "prepublish": "tsc && npm run analyze -- --exclude dist"
   },
   "dependencies": {
+    "@open-wc/lit-helpers": "^0.7.0",
     "lit": "^3.1.4"
   },
   "devDependencies": {
