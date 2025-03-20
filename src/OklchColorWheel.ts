@@ -9,7 +9,7 @@ export class OklchColorWheel extends LitElement {
       width: 100%;
       /* max-width: 300px; */
       /* Keeps aspect ratio 1:1 for a perfect square */
-      aspect-ratio: 1/1;
+      /* aspect-ratio: 1/1; */
       position: relative;
     }
 
@@ -96,14 +96,23 @@ export class OklchColorWheel extends LitElement {
 
   private _updateHueFromEvent(event: MouseEvent | TouchEvent) {
     if (!this._dragging) return;
+
     const svg = this.renderRoot.querySelector('svg');
     if (!svg) return;
 
     const rect = svg.getBoundingClientRect();
-    const clientX =
-      event instanceof TouchEvent ? event.touches[0].clientX : event.clientX;
-    const clientY =
-      event instanceof TouchEvent ? event.touches[0].clientY : event.clientY;
+
+    let clientX: number;
+    let clientY: number;
+
+    if ('touches' in event && event.touches.length > 0) {
+      clientX = event.touches[0].clientX;
+      clientY = event.touches[0].clientY;
+    } else {
+      clientX = (event as MouseEvent).clientX;
+      clientY = (event as MouseEvent).clientY;
+    }
+
     const dx = clientX - (rect.left + rect.width / 2);
     const dy = clientY - (rect.top + rect.height / 2);
     const angle = Math.atan2(dy, dx) * (180 / Math.PI);

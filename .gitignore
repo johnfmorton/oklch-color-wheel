@@ -22,3 +22,7 @@
 
 storybook-static
 custom-elements.json
+.rollup.cache/*
+/.rollup.cache/Users/john/git/lit-components/oklch-color-wheel/dist/tsconfig.tsbuildinfo
+/.rollup.cache/Users/john/git/lit-components/oklch-color-wheel/dist/src/OklchColorWheel.js.map
+/.rollup.cache/Users/john/git/lit-components/oklch-color-wheel/dist/src/OklchColorWheel.js
