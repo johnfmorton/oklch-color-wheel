@@ -3,21 +3,23 @@ import { createBasicConfig } from '@open-wc/building-rollup';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import typescript from '@rollup/plugin-typescript';
 
-const baseConfig = createBasicConfig();
+const baseConfig = createBasicConfig({
+  nodeResolve: {
+    moduleDirectories: ['node_modules'],
+    extensions: ['.js', '.ts']
+  }
+});
 
 export default merge(baseConfig, {
   input: 'src/oklch-color-wheel.ts',
   plugins: [
-    nodeResolve({
-      extensions: ['.js', '.ts'],
-      moduleDirectories: ['node_modules']
-    }),
     typescript({
       sourceMap: true
     })
   ],
   output: {
     dir: 'dist',
+    entryFileNames: '[name]-[hash].js',
     sourcemap: true,
     format: 'es'
   }
