@@ -3,9 +3,8 @@ export declare class OklchColorWheel extends LitElement {
     static styles: import("lit").CSSResult;
     header: string;
     private hue;
-    private radius;
     private _dragging;
-    private _updateHueFromEvent;
     private _startDrag;
+    private _updateHueFromEvent;
     render(): import("lit-html").TemplateResult<1>;
 }

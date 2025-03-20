@@ -1,41 +1,29 @@
 import { __decorate } from "tslib";
-import { html, css, LitElement } from 'lit';
+import { LitElement, html, css } from 'lit';
 import { property, state } from 'lit/decorators.js';
-function buildOklchConicGradient(l, c, steps) {
-    const step = 360 / steps;
-    const stops = [];
-    for (let i = 0; i < steps; i++) {
-        const angle = i * step;
-        stops.push(`oklch(${l} ${c} ${angle}deg) ${angle}deg`);
-    }
-    // Ensure it loops fully at 360
-    stops.push(`oklch(${l} ${c} 360deg) 360deg`);
-    return `conic-gradient(from 90deg, ${stops.join(', ')})`;
-}
 export class OklchColorWheel extends LitElement {
     constructor() {
         super(...arguments);
         this.header = 'OKLCH Color Wheel';
         this.hue = 0;
-        this.radius = 138;
         this._dragging = false;
-        this._startDrag = (event) => {
-            event.preventDefault();
-            this._dragging = true;
-            this._updateHueFromEvent(event);
-            const moveHandler = (e) => this._updateHueFromEvent(e);
-            const endHandler = () => {
-                this._dragging = false;
-                window.removeEventListener('mousemove', moveHandler);
-                window.removeEventListener('mouseup', endHandler);
-                window.removeEventListener('touchmove', moveHandler);
-                window.removeEventListener('touchend', endHandler);
-            };
-            window.addEventListener('mousemove', moveHandler);
-            window.addEventListener('mouseup', endHandler);
-            window.addEventListener('touchmove', moveHandler);
-            window.addEventListener('touchend', endHandler);
+    }
+    _startDrag(event) {
+        event.preventDefault();
+        this._dragging = true;
+        this._updateHueFromEvent(event);
+        const moveHandler = (e) => this._updateHueFromEvent(e);
+        const endHandler = () => {
+            this._dragging = false;
+            window.removeEventListener('mousemove', moveHandler);
+            window.removeEventListener('mouseup', endHandler);
+            window.removeEventListener('touchmove', moveHandler);
+            window.removeEventListener('touchend', endHandler);
         };
+        window.addEventListener('mousemove', moveHandler);
+        window.addEventListener('mouseup', endHandler);
+        window.addEventListener('touchmove', moveHandler);
+        window.addEventListener('touchend', endHandler);
     }
     _updateHueFromEvent(event) {
         if (!this._dragging)
@@ -46,17 +34,17 @@ export class OklchColorWheel extends LitElement {
         const rect = svg.getBoundingClientRect();
         const clientX = event instanceof TouchEvent ? event.touches[0].clientX : event.clientX;
         const clientY = event instanceof TouchEvent ? event.touches[0].clientY : event.clientY;
-        // Offset from the center of the SVG
         const dx = clientX - (rect.left + rect.width / 2);
         const dy = clientY - (rect.top + rect.height / 2);
         const angle = Math.atan2(dy, dx) * (180 / Math.PI);
         this.hue = (angle + 360) % 360;
     }
     render() {
+        // Convert hue to radians to place the handle
         const angleRad = (this.hue * Math.PI) / 180;
-        const handleX = 150 + this.radius * Math.cos(angleRad);
-        const handleY = 150 + this.radius * Math.sin(angleRad);
-        const gradient = buildOklchConicGradient(0.5, 0.2, 36);
+        // 140 radius matches 300 viewBox. Adjust radius or viewBox if you want a margin.
+        const handleX = 150 + 137 * Math.cos(angleRad);
+        const handleY = 150 + 137 * Math.sin(angleRad);
         return html `
       <div class="wrapper">
         <h2 style="text-align:center; margin:1rem 0 0.25rem 0; padding:0;">
@@ -67,28 +55,26 @@ export class OklchColorWheel extends LitElement {
         >
           Drag the white circle to change the degree.
         </div>
+
         <div
           class="outer-wheel"
           style="
-          width: 300px;
+          max-width: 300px;
           height: 300px;
           border-radius: 0%;
           margin: 0 auto;
           position: relative;
         "
         >
-          <svg
-            width="300"
-            height="300"
-            style="position: absolute; top: 0; left: 0"
-          >
+          <svg viewBox="0 0 300 300" preserveAspectRatio="xMidYMid meet">
+            <!-- The circle is 300 in diameter to match the entire viewBox -->
             <circle
               cx="150"
               cy="150"
-              r="${this.radius}"
+              r="137"
               fill="oklch(50.0% 0.2 ${this.hue.toFixed(0)})"
-              stroke="transparent"
-            />
+              stroke="lightgray"
+            ></circle>
             <g
               class="handle-group"
               @mousedown=${this._startDrag}
@@ -132,22 +118,30 @@ export class OklchColorWheel extends LitElement {
 OklchColorWheel.styles = css `
     :host {
       display: block;
-      padding: 0rem;
-      touch-action: none;
-      font-family: 'Arial', sans-serif;
+      /* Let the component shrink or grow while never exceeding 300px */
+      width: 100%;
+      /* max-width: 300px; */
+      /* Keeps aspect ratio 1:1 for a perfect square */
+      aspect-ratio: 1/1;
+      position: relative;
     }
+
     .wrapper {
+      /* max-width: 300px; */
       display: block;
       border: 1px solid #ccc;
       border-radius: 4px;
       padding: 0rem;
-
+      font-family: 'Arial', sans-serif;
     }
+
     svg {
-      width: 300px;
-      height: 300px;
-      display: block;
-      margin: 0 auto;
+      /* Make the SVG fill the host container */
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
     }
 
     .handle {
@@ -158,23 +152,32 @@ OklchColorWheel.styles = css `
     }
 
     .degree {
+      /* Absolutely centered text inside the host container */
       position: absolute;
-      width: 200px;
-      height: 200px;
       top: 50%;
-      left: calc(50% + 22px);
       transform: translate(-50%, -50%);
-      font-size: 1.2rem;
-      pointer-events: none; /* optional to allow clicks through */
+      pointer-events: none;
       text-align: center;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       color: white;
       font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo,
         Consolas, 'DejaVu Sans Mono', monospace;
       font-weight: bold;
-      font-size: 4.5rem;
+    }
+
+    @media (max-width: 400px) {
+      .degree {
+        font-size: 3rem;
+        left: calc(50% + 15px);
+        /* simpler style for small wrapper */
+      }
+    }
+
+    @media (min-width: 401px) {
+      .degree {
+        font-size: 4.25rem;
+        left: calc(50% + 22px);
+        /* or anything else for bigger wrapper */
+      }
     }
   `;
 __decorate([

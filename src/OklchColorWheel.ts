@@ -16,9 +16,9 @@ export class OklchColorWheel extends LitElement {
     .wrapper {
       /* max-width: 300px; */
       display: block;
-      border: 1px solid #ccc;
+      /* border: 1px solid #e7e7e7; */
       border-radius: 4px;
-      padding: 0rem;
+      padding: 0.5rem;
       font-family: 'Arial', sans-serif;
     }
 
@@ -164,7 +164,7 @@ export class OklchColorWheel extends LitElement {
         </div>
 
         <div
-          style="text-align: center; margin-bottom: 1rem; font-weight:bold; font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;"
+          style="text-align: center; margin-bottom: 1rem; font-weight:bold; font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace; white-space: normal; word-break: break-all;"
         >
           <div
             style="
