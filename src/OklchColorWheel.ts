@@ -17,10 +17,10 @@ export class OklchColorWheel extends LitElement {
   static styles = css`
     :host {
       display: block;
-
+      border: 1px solid #ccc;
+      padding: 0rem;
       touch-action: none;
     }
-
     svg {
       width: 300px;
       height: 300px;
@@ -89,16 +89,15 @@ export class OklchColorWheel extends LitElement {
     const gradient = buildOklchConicGradient(0.5, 0.2, 36);
 
     return html`
-      <h2>${this.header}</h2>
+      <h2 style="text-align:center">${this.header}</h2>
       <div
         class="outer-wheel"
         style="
           width: 340px;
           height: 340px;
-          border-radius: 50%;
+          border-radius: 0%;
           margin: 0 auto;
           position: relative;
-          overflow: hidden;
           background: #fafafa;
         "
       >
@@ -108,7 +107,7 @@ export class OklchColorWheel extends LitElement {
             background: ${gradient};
             width: 300px;
             height: 300px;
-            border-radius: 50%;
+            border-radius: 0%;
             margin: 20px auto;
             position: relative;
           "
@@ -122,7 +121,7 @@ export class OklchColorWheel extends LitElement {
               cx="150"
               cy="150"
               r="${this.radius}"
-              fill="none"
+              fill="green"
               stroke="transparent"
             />
             <g
