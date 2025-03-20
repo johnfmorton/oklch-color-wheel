@@ -1,6 +1,18 @@
 import { html, css, LitElement } from 'lit';
 import { property, state } from 'lit/decorators.js';
 
+function buildOklchConicGradient(l: number, c: number, steps: number) {
+  const step = 360 / steps;
+  const stops = [];
+  for (let i = 0; i < steps; i++) {
+    const angle = i * step;
+    stops.push(`oklch(${l} ${c} ${angle}deg) ${angle}deg`);
+  }
+  // Ensure it loops fully at 360
+  stops.push(`oklch(${l} ${c} 360deg) 360deg`);
+  return `conic-gradient(${stops.join(', ')})`;
+}
+
 export class OklchColorWheel extends LitElement {
   static styles = css`
     :host {
@@ -22,12 +34,7 @@ export class OklchColorWheel extends LitElement {
       stroke-width: 2;
       cursor: pointer;
     }
-    .color-wheel {
-      position: relative;
-      width: 300px;
-      height: 300px;
-      margin: 0 auto;
-    }
+
   `;
 
   @property({ type: String }) header = 'OKLCH Color Wheel';
@@ -79,15 +86,21 @@ export class OklchColorWheel extends LitElement {
     const handleX = 150 + this.radius * Math.cos(angleRad);
     const handleY = 150 + this.radius * Math.sin(angleRad);
 
+    const gradient = buildOklchConicGradient(0.8, 0.2, 36);
+
     return html`
       <h2>${this.header}</h2>
-      <div class="color-wheel">
-        <svg>
+      <div
+        class="color-wheel"
+        style="background: ${gradient}; width: 300px; height: 300px; border-radius: 50%; margin: 0 auto; position: relative;"
+      >
+        <svg width="300" height="300" style="position: absolute; top: 0; left: 0">
           <circle
             cx="150"
             cy="150"
             r="${this.radius}"
-            fill="conic-gradient placeholder"
+            fill="none"
+            stroke="transparent"
           />
           <g
             class="handle-group"
