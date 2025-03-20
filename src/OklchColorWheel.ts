@@ -17,11 +17,16 @@ export class OklchColorWheel extends LitElement {
   static styles = css`
     :host {
       display: block;
-      border: 1px solid #ccc;
-      border-radius: 4px;
       padding: 0rem;
       touch-action: none;
       font-family: 'Arial', sans-serif;
+    }
+    .wrapper {
+      display: block;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 0rem;
+
     }
     svg {
       width: 300px;
@@ -113,51 +118,58 @@ export class OklchColorWheel extends LitElement {
     const gradient = buildOklchConicGradient(0.5, 0.2, 36);
 
     return html`
-      <h2 style="text-align:center; margin:1rem 0 0.25rem 0; padding:0;">
-        ${this.header}
-      </h2>
-      <div style="text-align:center">
-        Drag the small white circle to change the degree.
-      </div>
-      <div
-        class="outer-wheel"
-        style="
+      <div class="wrapper">
+        <h2 style="text-align:center; margin:1rem 0 0.25rem 0; padding:0;">
+          ${this.header}
+        </h2>
+        <div
+          style="text-align:center; font-size:0.9rem; margin-bottom:0; color:#666;"
+        >
+          Drag the white circle to change the degree.
+        </div>
+        <div
+          class="outer-wheel"
+          style="
           width: 300px;
           height: 300px;
           border-radius: 0%;
           margin: 0 auto;
           position: relative;
-          background: #fafafa;
         "
-      >
-        <svg
-          width="300"
-          height="300"
-          style="position: absolute; top: 0; left: 0"
         >
-          <circle
-            cx="150"
-            cy="150"
-            r="${this.radius}"
-            fill="oklch(50.0% 0.2 ${this.hue.toFixed(0)})"
-            stroke="transparent"
-          />
-          <g
-            class="handle-group"
-            @mousedown=${this._startDrag}
-            @touchstart=${this._startDrag}
+          <svg
+            width="300"
+            height="300"
+            style="position: absolute; top: 0; left: 0"
           >
-            <circle class="handle" cx=${handleX} cy=${handleY} r="10"></circle>
-          </g>
-        </svg>
-        <div class="degree">${this.hue.toFixed(0)}°</div>
-      </div>
+            <circle
+              cx="150"
+              cy="150"
+              r="${this.radius}"
+              fill="oklch(50.0% 0.2 ${this.hue.toFixed(0)})"
+              stroke="transparent"
+            />
+            <g
+              class="handle-group"
+              @mousedown=${this._startDrag}
+              @touchstart=${this._startDrag}
+            >
+              <circle
+                class="handle"
+                cx=${handleX}
+                cy=${handleY}
+                r="10"
+              ></circle>
+            </g>
+          </svg>
+          <div class="degree">${this.hue.toFixed(0)}°</div>
+        </div>
 
-      <div
-        style="text-align: center; margin-bottom: 1rem; font-weight:bold; font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;"
-      >
         <div
-          style="
+          style="text-align: center; margin-bottom: 1rem; font-weight:bold; font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;"
+        >
+          <div
+            style="
         display: inline-block;
         position: relative;
         left: -3px;
@@ -168,10 +180,11 @@ export class OklchColorWheel extends LitElement {
           border: 1px solid #ccc;
           background: oklch(50.0% 0.2 ${this.hue.toFixed(0)});
           "
-        ></div>
-        <span style="color: #767676;">oklch(&nbsp;50.0%&nbsp;0.200</span>
-        <span style="color:#393939;">${this.hue.toFixed(0)}</span>
-        <span style="color: #767676;">)</span>
+          ></div>
+          <span style="color: #767676;">oklch(&nbsp;50.0%&nbsp;0.200</span>
+          <span style="color:#393939;">${this.hue.toFixed(0)}</span>
+          <span style="color: #767676;">)</span>
+        </div>
       </div>
     `;
   }
