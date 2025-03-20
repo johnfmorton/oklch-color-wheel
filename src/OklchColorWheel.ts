@@ -17,7 +17,7 @@ export class OklchColorWheel extends LitElement {
   static styles = css`
     :host {
       display: block;
-      padding: 25px;
+
       touch-action: none;
     }
 
@@ -40,7 +40,7 @@ export class OklchColorWheel extends LitElement {
   @property({ type: String }) header = 'OKLCH Color Wheel';
 
   @state() private hue: number = 0;
-  private radius = 100;
+  private radius = 150;
   private _dragging = false;
 
   private _updateHueFromEvent(event: MouseEvent | TouchEvent) {
