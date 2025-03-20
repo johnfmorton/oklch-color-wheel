@@ -1,0 +1,1 @@
+{"version":3,"file":"oklch-color-wheel.js","sourceRoot":"","sources":["../../src/oklch-color-wheel.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,eAAe,EAAE,MAAM,mBAAmB,CAAC;AAEpD,MAAM,CAAC,cAAc,CAAC,MAAM,CAAC,mBAAmB,EAAE,eAAe,CAAC,CAAC","sourcesContent":["import { OklchColorWheel } from './OklchColorWheel';\n\nwindow.customElements.define('oklch-color-wheel', OklchColorWheel);\n"]}

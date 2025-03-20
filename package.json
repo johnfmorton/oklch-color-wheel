@@ -14,8 +14,10 @@
   "scripts": {
     "analyze": "cem analyze --litelement",
     "start": "tsc && concurrently -k -r \"tsc --watch --preserveWatchOutput\" \"web-dev-server\"",
-    "build": "tsc && npm run analyze -- --exclude dist",
-    "prepublish": "tsc && npm run analyze -- --exclude dist"
+    "build-old": "tsc && npm run analyze -- --exclude dist",
+    "prepublish": "tsc && npm run analyze -- --exclude dist",
+    "build": "rimraf dist && rollup -c rollup.config.js",
+    "start:build": "npm run build && es-dev-server --root-dir dist --app-index index.html --compatibility none --open"
   },
   "dependencies": {
     "@open-wc/lit-helpers": "^0.7.0",
@@ -23,8 +25,15 @@
   },
   "devDependencies": {
     "@custom-elements-manifest/analyzer": "^0.10.3",
+    "@open-wc/building-rollup": "^3.0.2",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-typescript": "^12.1.2",
     "@web/dev-server": "^0.4.6",
     "concurrently": "^8.2.2",
+    "deepmerge": "^4.3.1",
+    "es-dev-server": "^2.1.0",
+    "rimraf": "^6.0.1",
+    "rollup": "^3.29.5",
     "tslib": "^2.6.3",
     "typescript": "^5.5.3"
   },
