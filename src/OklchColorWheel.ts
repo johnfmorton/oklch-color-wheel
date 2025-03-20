@@ -10,7 +10,7 @@ function buildOklchConicGradient(l: number, c: number, steps: number) {
   }
   // Ensure it loops fully at 360
   stops.push(`oklch(${l} ${c} 360deg) 360deg`);
-  return `conic-gradient(${stops.join(', ')})`;
+  return `conic-gradient(from 90deg, ${stops.join(', ')})`;
 }
 
 export class OklchColorWheel extends LitElement {
@@ -40,7 +40,7 @@ export class OklchColorWheel extends LitElement {
   @property({ type: String }) header = 'OKLCH Color Wheel';
 
   @state() private hue: number = 0;
-  private radius = 150;
+  private radius = 138;
   private _dragging = false;
 
   private _updateHueFromEvent(event: MouseEvent | TouchEvent) {
@@ -86,34 +86,54 @@ export class OklchColorWheel extends LitElement {
     const handleX = 150 + this.radius * Math.cos(angleRad);
     const handleY = 150 + this.radius * Math.sin(angleRad);
 
-    const gradient = buildOklchConicGradient(0.8, 0.2, 36);
+    const gradient = buildOklchConicGradient(0.5, 0.2, 36);
 
     return html`
       <h2>${this.header}</h2>
       <div
-        class="color-wheel"
-        style="background: ${gradient}; width: 300px; height: 300px; border-radius: 50%; margin: 0 auto; position: relative;"
+        class="outer-wheel"
+        style="
+          width: 340px;
+          height: 340px;
+          border-radius: 50%;
+          margin: 0 auto;
+          position: relative;
+          overflow: hidden;
+          background: #fafafa;
+        "
       >
-        <svg
-          width="300"
-          height="300"
-          style="position: absolute; top: 0; left: 0"
+        <div
+          class="color-wheel"
+          style="
+            background: ${gradient};
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            margin: 20px auto;
+            position: relative;
+          "
         >
-          <circle
-            cx="150"
-            cy="150"
-            r="${this.radius}"
-            fill="none"
-            stroke="transparent"
-          />
-          <g
-            class="handle-group"
-            @mousedown=${this._startDrag}
-            @touchstart=${this._startDrag}
+          <svg
+            width="300"
+            height="300"
+            style="position: absolute; top: 0; left: 0"
           >
-            <circle class="handle" cx=${handleX} cy=${handleY} r="10"></circle>
-          </g>
-        </svg>
+            <circle
+              cx="150"
+              cy="150"
+              r="${this.radius}"
+              fill="none"
+              stroke="transparent"
+            />
+            <g
+              class="handle-group"
+              @mousedown=${this._startDrag}
+              @touchstart=${this._startDrag}
+            >
+              <circle class="handle" cx=${handleX} cy=${handleY} r="10"></circle>
+            </g>
+          </svg>
+        </div>
       </div>
       <p>Hue: ${this.hue.toFixed(0)}°</p>
       <pre>

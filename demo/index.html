@@ -24,13 +24,47 @@
         </oklch-color-wheel>
         <div
           style="
-            width: 50px;
-            height: 50px;
-            margin-top: 1rem;
-            border: 1px solid #ccc;
-            background: oklch(50.0% 0.2 ${this.hue.toFixed(0)});
+            width: 340px;
+            height: 340px;
+            border-radius: 50%;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+            background: #fafafa;
           "
-        ></div>
+        >
+          <div
+            style="
+              background: oklch(50.0% 0.2 ${this.hue.toFixed(0)});
+              width: 300px;
+              height: 300px;
+              border-radius: 50%;
+              margin: 20px auto;
+              position: relative;
+            "
+          >
+            <svg
+              width="300"
+              height="300"
+              style="position: absolute; top: 0; left: 0"
+            >
+              <circle
+                cx="150"
+                cy="150"
+                r="${this.radius}"
+                fill="none"
+                stroke="transparent"
+              />
+              <g
+                class="handle-group"
+                @mousedown=${this._startDrag}
+                @touchstart=${this._startDrag}
+              >
+                <circle class="handle" cx=${handleX} cy=${handleY} r="10"></circle>
+              </g>
+            </svg>
+          </div>
+        </div>
       `,
       document.querySelector('#demo')
     );
