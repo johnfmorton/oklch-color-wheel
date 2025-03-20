@@ -1,38 +1,37 @@
-import { html, css, LitElement } from 'lit';
+import { LitElement, html, css } from 'lit';
 import { property, state } from 'lit/decorators.js';
-
-function buildOklchConicGradient(l: number, c: number, steps: number) {
-  const step = 360 / steps;
-  const stops = [];
-  for (let i = 0; i < steps; i++) {
-    const angle = i * step;
-    stops.push(`oklch(${l} ${c} ${angle}deg) ${angle}deg`);
-  }
-  // Ensure it loops fully at 360
-  stops.push(`oklch(${l} ${c} 360deg) 360deg`);
-  return `conic-gradient(from 90deg, ${stops.join(', ')})`;
-}
 
 export class OklchColorWheel extends LitElement {
   static styles = css`
     :host {
       display: block;
-      padding: 0rem;
-      touch-action: none;
-      font-family: 'Arial', sans-serif;
+      /* Let the component shrink or grow while never exceeding 300px */
+      width: 100%;
+      /* max-width: 300px; */
+      /* Keeps aspect ratio 1:1 for a perfect square */
+      aspect-ratio: 1/1;
+      position: relative;
     }
+
     .wrapper {
+      /* max-width: 300px; */
       display: block;
       border: 1px solid #ccc;
       border-radius: 4px;
       padding: 0rem;
-
+      font-family: 'Arial', sans-serif;
+    }
+    .wheel-container {
+      padding: 1rem;
+      background-color: green;
     }
     svg {
-      width: 300px;
-      height: 300px;
-      display: block;
-      margin: 0 auto;
+      /* Make the SVG fill the host container */
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
     }
 
     .handle {
@@ -43,53 +42,31 @@ export class OklchColorWheel extends LitElement {
     }
 
     .degree {
+      /* Absolutely centered text inside the host container */
       position: absolute;
-      width: 200px;
-      height: 200px;
       top: 50%;
-      left: calc(50% + 22px);
+      left: 50%;
       transform: translate(-50%, -50%);
-      font-size: 1.2rem;
-      pointer-events: none; /* optional to allow clicks through */
+      pointer-events: none;
       text-align: center;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       color: white;
       font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo,
         Consolas, 'DejaVu Sans Mono', monospace;
       font-weight: bold;
-      font-size: 4.5rem;
+      /* If you want it to adapt to smaller screens, consider something like:
+         font-size: clamp(1rem, 5vw, 3rem);
+       */
+      font-size: 1.2rem;
+      font-size: clamp(1rem, 5vw, 3rem);
     }
   `;
 
   @property({ type: String }) header = 'OKLCH Color Wheel';
 
-  @state() private hue: number = 0;
-  private radius = 138;
+  @state() private hue = 0;
   private _dragging = false;
 
-  private _updateHueFromEvent(event: MouseEvent | TouchEvent) {
-    if (!this._dragging) return;
-
-    const svg = this.renderRoot.querySelector('svg');
-    if (!svg) return;
-
-    const rect = svg.getBoundingClientRect();
-    const clientX =
-      event instanceof TouchEvent ? event.touches[0].clientX : event.clientX;
-    const clientY =
-      event instanceof TouchEvent ? event.touches[0].clientY : event.clientY;
-
-    // Offset from the center of the SVG
-    const dx = clientX - (rect.left + rect.width / 2);
-    const dy = clientY - (rect.top + rect.height / 2);
-
-    const angle = Math.atan2(dy, dx) * (180 / Math.PI);
-    this.hue = (angle + 360) % 360;
-  }
-
-  private _startDrag = (event: MouseEvent | TouchEvent) => {
+  private _startDrag(event: MouseEvent | TouchEvent) {
     event.preventDefault();
     this._dragging = true;
     this._updateHueFromEvent(event);
@@ -108,14 +85,30 @@ export class OklchColorWheel extends LitElement {
     window.addEventListener('mouseup', endHandler);
     window.addEventListener('touchmove', moveHandler);
     window.addEventListener('touchend', endHandler);
-  };
+  }
+
+  private _updateHueFromEvent(event: MouseEvent | TouchEvent) {
+    if (!this._dragging) return;
+    const svg = this.renderRoot.querySelector('svg');
+    if (!svg) return;
+
+    const rect = svg.getBoundingClientRect();
+    const clientX =
+      event instanceof TouchEvent ? event.touches[0].clientX : event.clientX;
+    const clientY =
+      event instanceof TouchEvent ? event.touches[0].clientY : event.clientY;
+    const dx = clientX - (rect.left + rect.width / 2);
+    const dy = clientY - (rect.top + rect.height / 2);
+    const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+    this.hue = (angle + 360) % 360;
+  }
 
   render() {
+    // Convert hue to radians to place the handle
     const angleRad = (this.hue * Math.PI) / 180;
-    const handleX = 150 + this.radius * Math.cos(angleRad);
-    const handleY = 150 + this.radius * Math.sin(angleRad);
-
-    const gradient = buildOklchConicGradient(0.5, 0.2, 36);
+    // 150 radius matches 300 viewBox. Adjust radius or viewBox if you want a margin.
+    const handleX = 150 + 150 * Math.cos(angleRad);
+    const handleY = 150 + 150 * Math.sin(angleRad);
 
     return html`
       <div class="wrapper">
@@ -127,42 +120,41 @@ export class OklchColorWheel extends LitElement {
         >
           Drag the white circle to change the degree.
         </div>
-        <div
-          class="outer-wheel"
-          style="
-          width: 300px;
+        <div class="wheel-container">
+          <div
+            class="outer-wheel"
+            style="
+          max-width: 300px;
           height: 300px;
           border-radius: 0%;
           margin: 0 auto;
           position: relative;
         "
-        >
-          <svg
-            width="300"
-            height="300"
-            style="position: absolute; top: 0; left: 0"
           >
-            <circle
-              cx="150"
-              cy="150"
-              r="${this.radius}"
-              fill="oklch(50.0% 0.2 ${this.hue.toFixed(0)})"
-              stroke="transparent"
-            />
-            <g
-              class="handle-group"
-              @mousedown=${this._startDrag}
-              @touchstart=${this._startDrag}
-            >
+            <svg viewBox="0 0 300 300" preserveAspectRatio="xMidYMid meet">
+              <!-- The circle is 300 in diameter to match the entire viewBox -->
               <circle
-                class="handle"
-                cx=${handleX}
-                cy=${handleY}
-                r="10"
+                cx="150"
+                cy="150"
+                r="150"
+                fill="oklch(50.0% 0.2 ${this.hue.toFixed(0)})"
+                stroke="lightgray"
               ></circle>
-            </g>
-          </svg>
-          <div class="degree">${this.hue.toFixed(0)}°</div>
+              <g
+                class="handle-group"
+                @mousedown=${this._startDrag}
+                @touchstart=${this._startDrag}
+              >
+                <circle
+                  class="handle"
+                  cx=${handleX}
+                  cy=${handleY}
+                  r="10"
+                ></circle>
+              </g>
+            </svg>
+            <div class="degree">${this.hue.toFixed(0)}°</div>
+          </div>
         </div>
 
         <div
