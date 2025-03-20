@@ -94,7 +94,11 @@ export class OklchColorWheel extends LitElement {
         class="color-wheel"
         style="background: ${gradient}; width: 300px; height: 300px; border-radius: 50%; margin: 0 auto; position: relative;"
       >
-        <svg width="300" height="300" style="position: absolute; top: 0; left: 0">
+        <svg
+          width="300"
+          height="300"
+          style="position: absolute; top: 0; left: 0"
+        >
           <circle
             cx="150"
             cy="150"
@@ -112,6 +116,20 @@ export class OklchColorWheel extends LitElement {
         </svg>
       </div>
       <p>Hue: ${this.hue.toFixed(0)}°</p>
+      <pre>
+        <code>
+          oklch(50.0% 0.200 ${this.hue.toFixed(0)})
+        </code>
+      </pre>
+      <div
+        style="
+          width: 50px;
+          height: 50px;
+          margin-top: 1rem;
+          border: 1px solid #ccc;
+          background: oklch(50.0% 0.2 ${this.hue.toFixed(0)});"
+      >
+      </div>
     `;
   }
 }
